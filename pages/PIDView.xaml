@@ -1,0 +1,221 @@
+﻿<UserControl x:Class="Aspan_Ground.pages.PIDView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Aspan_Ground.pages"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    
+    <!-- Sayfa Ana Izgarası -->
+    <Grid Background="#FF1B1F23">
+        
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20" ItemWidth="350">
+                
+                <!-- STANDART STİL KARTLAR İÇİN MİMARİ: Bütün Kartlar Aynı Şablonda Yazılır. -->
+                
+                <!-- 1. ROLL PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <!-- Kart Başlığı -->
+                        <TextBlock Text="ROLL PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        
+                        <!-- Parametre Girdileri -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPR" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIR" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDR" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericEXTRAR" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        
+                        <!-- Aksiyon Butonları -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonRollRefresh" Content="Read" Click="ButtonRollRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonRollWrite" Content="Write" Click="ButtonRollWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 2. PITCH PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="PITCH PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPP" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIP" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDP" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIEXTRAP" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonPitchRefresh" Content="Read" Click="ButtonPitchRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonPitchWrite" Content="Write" Click="ButtonPitchWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 3. YAW PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="YAW PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPY" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIY" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDY" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericEXTRAY" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonYawRefresh" Content="Read" Click="ButtonYawRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonYawWrite" Content="Write" Click="ButtonYawWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 4. HEIGHT PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="HEIGHT PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPH" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIH" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDH" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericEXTRAH" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonHeightRefresh" Content="Read" Click="ButtonHeightRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonHeightWrite" Content="Write" Click="ButtonHeightWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- 5. EAST PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="EAST PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPE" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIE" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDE" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericEXTRAE" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonEastRefresh" Content="Read" Click="ButtonEastRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonEastWrite" Content="Write" Click="ButtonEastWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 6. NORTH PID KARTI -->
+                <Border BorderBrush="#30363D" BorderThickness="1" CornerRadius="8" Background="#FF0D1117" Margin="10,10" Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="NORTH PID" Foreground="#58A6FF" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericPN" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericIN" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericDN" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <mah:NumericUpDown x:Name="NumericEXTRAN" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
+                            <Button x:Name="ButtonNorthRefresh" Content="Read" Click="ButtonNorthRefresh_Click" Background="#238636" Foreground="White" BorderBrush="Transparent" Margin="0,0,10,0" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                            <Button x:Name="ButtonNorthWrite" Content="Write" Click="ButtonNorthWrite_Click" Background="#21262D" Foreground="#58A6FF" BorderBrush="#30363D" Width="120" mah:ControlsHelper.CornerRadius="4"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+            </WrapPanel>
+        </ScrollViewer>
+
+        <!-- Read All / Write All -->
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center"
+                    Orientation="Horizontal" Margin="0,0,0,20">
+            <Button x:Name="ButtonReadAll"
+                    Content="Read All"
+                    Click="ButtonReadAll_Click"
+                    Background="#1F6FEB" Foreground="White"
+                    BorderBrush="Transparent"
+                    Width="160" Height="40"
+                    FontSize="14" FontWeight="SemiBold"
+                    Margin="0,0,20,0"
+                    mah:ControlsHelper.CornerRadius="6"/>
+            <Button x:Name="ButtonWriteAll"
+                    Content="Write All"
+                    Click="ButtonWriteAll_Click"
+                    Background="#238636" Foreground="White"
+                    BorderBrush="Transparent"
+                    Width="160" Height="40"
+                    FontSize="14" FontWeight="SemiBold"
+                    mah:ControlsHelper.CornerRadius="6"/>
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

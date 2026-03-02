@@ -1,0 +1,97 @@
+﻿<UserControl x:Class="Aspan_Ground.pages.WatchView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Aspan_Ground.pages"
+             xmlns:gmap="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:services="clr-namespace:Aspan_Ground.services"
+             xmlns:utils="clr-namespace:Aspan_Ground.utils"
+             xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
+             xmlns:instruments="clr-namespace:Aspan_Ground.components.instruments"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <utils:BatteryColorConverter x:Key="BatteryColorConverter" />
+    </UserControl.Resources>
+
+    <Grid Background="#FF1B1F23">
+        <!-- Veri bağlama (Binding) için DataContext ayarı -->
+        <Grid.DataContext>
+            <Binding Source="{x:Static services:DataDesc.Instance}"/>
+        </Grid.DataContext>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>     
+        <!-- Sol Taraf: ÇEŞİTLİ GÖSTERGELER -->
+        <Grid Grid.Column="0">
+            <!-- Havacılık Göstergeleri (Sol Üst) -->
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="20">
+                
+                <!-- Suni Ufuk (Attitude Indicator) -->
+                <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Margin="0,0,20,0" Width="260" Height="260" SnapsToDevicePixels="True">
+                    <wfi:WindowsFormsHost Background="Transparent" Margin="2">
+                        <instruments:AttitudeIndicatorInstrumentControl x:Name="AttitudeIndicator" />
+                    </wfi:WindowsFormsHost>
+                </Border>
+
+                <!-- Pusula (Heading Indicator) -->
+                <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Width="260" Height="260" SnapsToDevicePixels="True">
+                    <wfi:WindowsFormsHost Background="Transparent" Margin="2">
+                        <instruments:HeadingIndicatorInstrumentControl x:Name="HeadingIndicator" />
+                    </wfi:WindowsFormsHost>
+                </Border>
+
+            </StackPanel>
+
+            <!-- Göstergeler (Sol Alt Köşe) -->
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20" Orientation="Horizontal">
+                
+                <!-- Uydu -->
+                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                    <materialDesign:PackIcon Kind="SatelliteVariant" 
+                                             Foreground="#58A6FF" 
+                                             Width="32" 
+                                             Height="32" 
+                                             HorizontalAlignment="Center"/>
+                    
+                    <TextBlock Text="{Binding currentSatellites}" 
+                               Foreground="White" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- Batarya -->
+                <StackPanel Orientation="Vertical">
+                    <materialDesign:PackIcon Kind="BatteryMedium" 
+                                             Foreground="{Binding currentBattery, Converter={StaticResource BatteryColorConverter}}" 
+                                             Width="32" 
+                                             Height="32" 
+                                             HorizontalAlignment="Center"/>
+                    
+                    <TextBlock Text="{Binding currentBattery, StringFormat={}{0}}" 
+                               Foreground="{Binding currentBattery, Converter={StaticResource BatteryColorConverter}}" 
+                               FontSize="18" 
+                               FontWeight="Bold" 
+                               HorizontalAlignment="Center" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+
+            </StackPanel>
+
+        </Grid>
+
+        <!-- Sağ Taraf: HARİTA KONTROLÜ -->
+        <Border Grid.Column="1" 
+                BorderBrush="#30363D" 
+                BorderThickness="1,0,0,0">
+            <gmap:GMapControl x:Name="MapControl" 
+                              Margin="0" />
+        </Border>
+    </Grid>
+</UserControl>

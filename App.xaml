@@ -1,0 +1,29 @@
+﻿<Application x:Class="Aspan_Ground.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Aspan_Ground"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- MahApps.Metro Koyu (Dark) Tema ve Kontrol Stilleri -->
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- GLOBAL YAZI TİPİ (FONT) TANIMLAMASI (MahApps Fontlarını Eziyoruz) -->
+            <FontFamily x:Key="LexendFont">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+            
+            <FontFamily x:Key="MahApps.Fonts.Family.Control">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Header">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.WindowTitle">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Button">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+
+            <!-- Diğer genel font zorlamaları (MahApps dışı için) -->
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{StaticResource LexendFont}"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

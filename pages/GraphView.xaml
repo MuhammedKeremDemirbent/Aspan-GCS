@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="Aspan_Ground.pages.GraphView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Aspan_Ground.pages"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:molecules="clr-namespace:Aspan_Ground.components.molecules"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1200">
+
+    <UserControl.Resources>
+        <!-- Radio Button Style -->
+        <Style x:Key="GraphRadioStyle" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="#C9D1D9"/>
+            <Setter Property="Margin" Value="0,0,15,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <!-- Button Style with Green Border like screenshot -->
+        <Style x:Key="LogButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#1B1F23"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#238636"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Width" Value="140"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#238636"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="#0D1117">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOP PANEL: Settings and Toolbar -->
+        <Border Grid.Row="0" Background="#161B22" BorderBrush="#30363D" BorderThickness="0,0,0,1" Padding="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Radio Buttons -->
+                <Grid Grid.Column="0" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <RadioButton x:Name="RadioRoll" Content="Roll" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="0" Grid.Column="0" Checked="Radio_Checked"/>
+                    <RadioButton x:Name="RadioPitch" Content="Pitch" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="1" Grid.Column="0" Checked="Radio_Checked"/>
+                    <RadioButton x:Name="RadioYaw" Content="Yaw" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="2" Grid.Column="0" Checked="Radio_Checked"/>
+
+                    <RadioButton x:Name="RadioRollSp" Content="Roll/Setpoint" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="0" Grid.Column="1" Checked="Radio_Checked"/>
+                    <RadioButton x:Name="RadioPitchSp" Content="Pitch/Setpoint" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="1" Grid.Column="1" Checked="Radio_Checked"/>
+                    <RadioButton x:Name="RadioYawSp" Content="Yaw/Setpoint" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="2" Grid.Column="1" Checked="Radio_Checked"/>
+
+                    <RadioButton x:Name="RadioRollPitch" Content="Roll/Pitch" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="0" Grid.Column="2" Checked="Radio_Checked"/>
+                    <RadioButton x:Name="RadioNone" Content="None" IsChecked="True" Style="{StaticResource GraphRadioStyle}" 
+                                 Grid.Row="1" Grid.Column="2" Checked="Radio_Checked"/>
+                </Grid>
+
+                <!-- Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="20,0,0,0">
+                    <Button x:Name="BtnStartLog" Content="Start Log" Style="{StaticResource LogButtonStyle}" Click="BtnStartLog_Click"/>
+                    <Button x:Name="BtnSaveLog" Content="Save Log" Style="{StaticResource LogButtonStyle}" Click="BtnSaveLog_Click"/>
+                    <Button x:Name="BtnOpenFolder" Content="Open Folder" Style="{StaticResource LogButtonStyle}" Click="BtnOpenFolder_Click" Margin="0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- CHART DISPLAY -->
+        <lvc:CartesianChart x:Name="MainChart" Grid.Row="1" Margin="20" Series="{Binding VisibleSeries}" XAxes="{Binding XAxes}" YAxes="{Binding YAxes}"/>
+        
+        <!-- Hata ve Bilgi Mesajları İçin Component -->
+        <molecules:alerts x:Name="GraphAlert" Grid.RowSpan="2" Panel.ZIndex="100"/>
+    </Grid>
+</UserControl>
