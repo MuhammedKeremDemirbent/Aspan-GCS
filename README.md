@@ -2,14 +2,6 @@
 
 A professional, feature-rich Windows-based Ground Control Station (GCS) software for drone and UAV operations. Built with C# and WPF, this application provides real-time telemetry monitoring, mission planning, and PID tuning capabilities.
 
-## Sustainable Development Goals
-
-- **SDG 9 (Industry, Innovation and Infrastructure):** Fosters innovation in unmanned aerial vehicle (UAV) technology by providing robust, accessible ground control infrastructure.
-- **SDG 11 (Sustainable Cities and Communities):** Supports the deployment of drones for urban planning, environmental monitoring, and emergency response operations.
-- **SDG 4 (Quality Education):** Serves as an educational tool for aerospace and robotics engineering students to understand flight dynamics, PID tuning, and telemetry systems.
-
----
-
 ## Project Overview
 
 Aspan Ground is designed to be the central command hub for UAV systems, offering:
