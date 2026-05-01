@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Aspan Ground Control Station
 
 A professional, feature-rich Windows-based Ground Control Station (GCS) software for drone and UAV operations. Built with C# and WPF, this application provides real-time telemetry monitoring, mission planning, and PID tuning capabilities.
@@ -124,3 +125,6 @@ Use Inno Setup with the provided `AspanGround.iss` file to compile a standalone 
 ## Disclaimer
 
 This software is intended for developmental and experimental use. Always adhere to local aviation regulations and safety guidelines when operating Unmanned Aerial Vehicles.
+=======
+Ground Control Station for UAV's.
+>>>>>>> 1e7d3758d7251d7f9496d0b500c09ebecca6382b
