@@ -243,39 +243,12 @@ namespace Aspan_Ground.pages
                 ShowConnectionAlert();
                 return;
             }
-            foreach (PID.PidAxis axis in Enum.GetValues(typeof(PID.PidAxis)))
-                ReadPid(axis);
-            FlashButton(sender as Button, "Reading All...", "Read All");
-        }
 
-        // ── WRITE ALL ──────────────────────────────────────────
-        // Bağlantı 1 kere kontrol edilir, 1 uyarı gösterilir
-        private void ButtonWriteAll_Click(object sender, RoutedEventArgs e)
-        {
-            if (!SerialManager.Instance.IsConnected)
-            {
-                ShowConnectionAlert();
-                return;
-            }
-            WritePid(PID.PidAxis.Roll, new PID.PIDController(
-                (float)(NumericPR.Value ?? 0), (float)(NumericIR.Value ?? 0),
-                (float)(NumericDR.Value ?? 0), (float)(NumericEXTRAR.Value ?? 0)));
-            WritePid(PID.PidAxis.Pitch, new PID.PIDController(
-                (float)(NumericPP.Value ?? 0), (float)(NumericIP.Value ?? 0),
-                (float)(NumericDP.Value ?? 0), (float)(NumericIEXTRAP.Value ?? 0)));
-            WritePid(PID.PidAxis.Yaw, new PID.PIDController(
-                (float)(NumericPY.Value ?? 0), (float)(NumericIY.Value ?? 0),
-                (float)(NumericDY.Value ?? 0), (float)(NumericEXTRAY.Value ?? 0)));
-            WritePid(PID.PidAxis.Height, new PID.PIDController(
-                (float)(NumericPH.Value ?? 0), (float)(NumericIH.Value ?? 0),
-                (float)(NumericDH.Value ?? 0), (float)(NumericEXTRAH.Value ?? 0)));
-            WritePid(PID.PidAxis.East, new PID.PIDController(
-                (float)(NumericPE.Value ?? 0), (float)(NumericIE.Value ?? 0),
-                (float)(NumericDE.Value ?? 0), (float)(NumericEXTRAE.Value ?? 0)));
-            WritePid(PID.PidAxis.North, new PID.PIDController(
-                (float)(NumericPN.Value ?? 0), (float)(NumericIN.Value ?? 0),
-                (float)(NumericDN.Value ?? 0), (float)(NumericEXTRAN.Value ?? 0)));
-            FlashButton(sender as Button, "All Sent ✓", "Write All");
+            // Firmware (telemetry.c) üzerindeki case 6 (Read All) komutunu tetikler.
+            // Tek bir paket gider, cihaz tüm PID'leri sırayla yanıtlayarak döner.
+            ReadPid(PID.PidAxis.All);
+            
+            FlashButton(sender as Button, "Reading All...", "Read All");
         }
     }
 }

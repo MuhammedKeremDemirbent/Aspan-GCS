@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -26,7 +26,9 @@ namespace Aspan_Ground.pages
         {
             new Axis
             {
-                IsVisible = false // Hide X-axis labels for a clean flowing look
+                LabelsPaint = null, // Hide X-axis labels (0-100 numbers)
+                SeparatorsPaint = new SolidColorPaint(new SKColor(220, 220, 220)) { StrokeThickness = 0.5f },
+                TextSize = 12
             }
         };
 
@@ -34,9 +36,20 @@ namespace Aspan_Ground.pages
         {
             new Axis
             {
-                LabelsPaint = new SolidColorPaint(SKColors.LightGray),
-                SeparatorsPaint = new SolidColorPaint(new SKColor(48, 54, 61)) { StrokeThickness = 1 }
+                LabelsPaint = new SolidColorPaint(SKColors.Black) { FontFamily = "Inter" },
+                SeparatorsPaint = new SolidColorPaint(new SKColor(220, 220, 220)) { StrokeThickness = 0.5f },
+                TextSize = 12,
+                MinLimit = -180,
+                MaxLimit = 180,
+                MinStep = 30,
+                UnitWidth = 30
             }
+        };
+
+        public DrawMarginFrame MarginFrame { get; set; } = new DrawMarginFrame
+        {
+            Fill = null,
+            Stroke = new SolidColorPaint(new SKColor(210, 210, 210), 1.5f) // Light Gray Border
         };
 
         private readonly DispatcherTimer _graphTimer;
@@ -63,16 +76,21 @@ namespace Aspan_Ground.pages
         {
             DataContext = this;
 
-            _logsFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+            _logsFolder = Path.Combine( //Son değişen erişim izni ile alakalı yer bura
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "Aspan Ground", "Logs");
+            if (!Directory.Exists(_logsFolder))
+            {
+                Directory.CreateDirectory(_logsFolder);
+            }
+            _seriesRoll = CreateSeries("Roll", _rollData, SKColor.Parse("#0072BD")); // MATLAB Blue
+            _seriesPitch = CreateSeries("Pitch", _pitchData, SKColor.Parse("#D95319")); // MATLAB Orange
+            _seriesYaw = CreateSeries("Yaw", _yawData, SKColor.Parse("#EDB120")); // MATLAB Yellow
+            _seriesRollSp = CreateSeries("Roll Setpoint", _rollSpData, SKColor.Parse("#7E2F8E")); // MATLAB Purple
+            _seriesPitchSp = CreateSeries("Pitch Setpoint", _pitchSpData, SKColor.Parse("#7E2F8E")); // MATLAB Purple
+            _seriesYawSp = CreateSeries("Yaw Setpoint", _yawSpData, SKColor.Parse("#7E2F8E")); // MATLAB Purple
 
-            _seriesRoll = CreateSeries("Roll", _rollData, SKColors.LightBlue);
-            _seriesPitch = CreateSeries("Pitch", _pitchData, SKColors.LightGreen);
-            _seriesYaw = CreateSeries("Yaw", _yawData, SKColors.Orange);
-            _seriesRollSp = CreateSeries("Roll Setpoint", _rollSpData, SKColors.Orchid);
-            _seriesPitchSp = CreateSeries("Pitch Setpoint", _pitchSpData, SKColors.Orchid);
-            _seriesYawSp = CreateSeries("Yaw Setpoint", _yawSpData, SKColors.Orchid);
-
-            _graphTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+            _graphTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(20) };
             _graphTimer.Tick += GraphTimer_Tick;
 
             InitializeComponent();
@@ -112,7 +130,8 @@ namespace Aspan_Ground.pages
                 Name = name,
                 Values = data,
                 Fill = null,
-                GeometrySize = 6,
+                GeometrySize = 0,
+                LineSmoothness = 0,
                 Stroke = new SolidColorPaint(color) { StrokeThickness = 2 }
             };
         }
@@ -122,13 +141,13 @@ namespace Aspan_Ground.pages
             // Update Graph Data
             if (RadioNone.IsChecked != true)
             {
-                if (RadioRoll.IsChecked == true || RadioRollSp.IsChecked == true || RadioRollPitch.IsChecked == true)
+                if (RadioRoll.IsChecked == true || RadioRollSp.IsChecked == true || RadioRollPitch.IsChecked == true || RadioRollPitchYaw.IsChecked == true)
                     AddData(_rollData, DataDesc.Instance.currentRoll);
 
-                if (RadioPitch.IsChecked == true || RadioPitchSp.IsChecked == true || RadioRollPitch.IsChecked == true)
+                if (RadioPitch.IsChecked == true || RadioPitchSp.IsChecked == true || RadioRollPitch.IsChecked == true || RadioRollPitchYaw.IsChecked == true)
                     AddData(_pitchData, DataDesc.Instance.currentPitch);
 
-                if (RadioYaw.IsChecked == true || RadioYawSp.IsChecked == true)
+                if (RadioYaw.IsChecked == true || RadioYawSp.IsChecked == true || RadioRollPitchYaw.IsChecked == true)
                     AddData(_yawData, DataDesc.Instance.currentYaw);
 
                 if (RadioRollSp.IsChecked == true)
@@ -147,8 +166,9 @@ namespace Aspan_Ground.pages
                 try
                 {
                     string time = DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss");
-                    string line = $"{DataDesc.Instance.currentRoll:F2}\t{DataDesc.Instance.currentPitch:F2}\t{DataDesc.Instance.currentYaw:F2}\t" +
-                                  $"{DataDesc.Instance.rollSetpoint:F2}\t{DataDesc.Instance.pitchSetpoint:F2}\t{DataDesc.Instance.yawSetpoint:F2}\t{time}";
+                    string line = $"{DataDesc.Instance.currentRoll:F2},{DataDesc.Instance.currentPitch:F2},{DataDesc.Instance.currentYaw:F2}," +
+                                  $"{DataDesc.Instance.currentAltitude:F2}," +
+                                  $"{DataDesc.Instance.rollSetpoint:F2},{DataDesc.Instance.pitchSetpoint:F2},{DataDesc.Instance.yawSetpoint:F2},{time}";
                     _logWriter.WriteLine(line);
                     _logWriter.Flush();
                 }
@@ -165,9 +185,9 @@ namespace Aspan_Ground.pages
         private void AddData(ObservableCollection<ObservableValue> collection, float value)
         {
             collection.Add(new ObservableValue(value));
-            if (collection.Count > 50)
+            if (collection.Count > 300) 
             {
-                collection.RemoveAt(0); // Flows from right to left, inserting on right, falling off left
+                collection.RemoveAt(0);
             }
         }
 
@@ -192,18 +212,66 @@ namespace Aspan_Ground.pages
             _pitchSpData.Clear();
             _yawSpData.Clear();
 
-            if (RadioRoll.IsChecked == true) { VisibleSeries.Add(_seriesRoll); }
-            else if (RadioPitch.IsChecked == true) { VisibleSeries.Add(_seriesPitch); }
-            else if (RadioYaw.IsChecked == true) { VisibleSeries.Add(_seriesYaw); }
-            else if (RadioRollSp.IsChecked == true) { VisibleSeries.Add(_seriesRoll); VisibleSeries.Add(_seriesRollSp); }
-            else if (RadioPitchSp.IsChecked == true) { VisibleSeries.Add(_seriesPitch); VisibleSeries.Add(_seriesPitchSp); }
-            else if (RadioYawSp.IsChecked == true) { VisibleSeries.Add(_seriesYaw); VisibleSeries.Add(_seriesYawSp); }
-            else if (RadioRollPitch.IsChecked == true) { VisibleSeries.Add(_seriesRoll); VisibleSeries.Add(_seriesPitch); }
-
+            if (RadioRoll.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesRoll); 
+                UpdateYAxisLimits(-180, 180);
+            }
+            else if (RadioPitch.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesPitch); 
+                UpdateYAxisLimits(-180, 180);
+            }
+            else if (RadioYaw.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesYaw); 
+                UpdateYAxisLimits(0, 360);
+            }
+            else if (RadioRollSp.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesRoll); 
+                VisibleSeries.Add(_seriesRollSp); 
+                UpdateYAxisLimits(-180, 180);
+            }
+            else if (RadioPitchSp.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesPitch); 
+                VisibleSeries.Add(_seriesPitchSp); 
+                UpdateYAxisLimits(-180, 180);
+            }
+            else if (RadioYawSp.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesYaw); 
+                VisibleSeries.Add(_seriesYawSp); 
+                UpdateYAxisLimits(0, 360);
+            }
+            else if (RadioRollPitch.IsChecked == true) 
+            { 
+                VisibleSeries.Add(_seriesRoll); 
+                VisibleSeries.Add(_seriesPitch); 
+                UpdateYAxisLimits(-180, 180);
+            }
+            else if (RadioRollPitchYaw.IsChecked == true)
+            {
+                VisibleSeries.Add(_seriesRoll);
+                VisibleSeries.Add(_seriesPitch);
+                VisibleSeries.Add(_seriesYaw);
+                UpdateYAxisLimits(-180, 360);
+            }
             if (RadioNone.IsChecked == true && !_isLogging)
                 _graphTimer.Stop();
             else
                 _graphTimer.Start();
+        }
+
+        private void UpdateYAxisLimits(double min, double max)
+        {
+            if (YAxes == null || YAxes.Length == 0) return;
+
+            YAxes[0].MinLimit = min;
+            YAxes[0].MaxLimit = max;
+            YAxes[0].MinStep = 30;
+            YAxes[0].UnitWidth = 30;
         }
 
         private void BtnStartLog_Click(object sender, RoutedEventArgs e)
@@ -221,9 +289,9 @@ namespace Aspan_Ground.pages
                 if (!Directory.Exists(_logsFolder))
                     Directory.CreateDirectory(_logsFolder);
 
-                string filename = $"TelemetryLog_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                string filename = $"TelemetryLog_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
                 _logWriter = new StreamWriter(Path.Combine(_logsFolder, filename), false, Encoding.UTF8);
-                _logWriter.WriteLine("Roll\tPitch\tYaw\tRollSetpoint\tPitchSetpoint\tYawSetpoint\tDate_Time");
+                _logWriter.WriteLine("Roll,Pitch,Yaw,Altitude,RollSetpoint,PitchSetpoint,YawSetpoint,Date_Time");
                 
                 _isLogging = true;
                 _graphTimer.Start(); // Ensure timer ticks for logging even if None is checked

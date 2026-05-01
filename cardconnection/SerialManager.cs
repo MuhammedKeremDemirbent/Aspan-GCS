@@ -22,6 +22,8 @@ namespace Aspan_Ground.cardconnection
 
         private System.IO.Ports.SerialPort _serialPort;
         private Telemetry _telemetryParser;
+        private System.Timers.Timer _heartbeatWatchdog;
+        private DateTime _lastPacketTime;
 
         // Dışarıdan "new SerialManager()" yapılmasını yasakla
         private SerialManager()
@@ -32,16 +34,22 @@ namespace Aspan_Ground.cardconnection
             _serialPort.DataReceived += SerialPort_DataReceived;
             _serialPort.ErrorReceived += SerialPort_ErrorReceived;
             
-            _telemetryParser = new Telemetry(); //Nesne oluşturma
+            _telemetryParser = new Telemetry(); 
+
+            // Watchdog Timer Setup
+            _heartbeatWatchdog = new System.Timers.Timer(1000); // Check every second
+            _heartbeatWatchdog.Elapsed += HeartbeatWatchdog_Elapsed;
         } 
 
         public bool IsConnected { get; private set; }
+        public bool IsVerified { get; private set; }
         public bool IsSynchronized { get; private set; }
         
         // Kullanıcı isteyerek mi kopardı, yoksa fiziksel kablo mu çekildi ayrımını yapmak için:
         public bool IsUserRequestedDisconnect { get; private set; }
 
         public event Action ConnectionSynchronized;
+        public event Action OnConnectionVerified; // Handshake başarılı olduğunda tetiklenir
         
         // true=bağlandı, false=kesildi. Ayrıca dışarıya (isConnected, isUserRequested) çift parametre dönmüyoruz (eski eventleri bozmamak için),
         // Sınıf üzerinden IsUserRequestedDisconnect okunarak ayrım yapılacak.
@@ -64,21 +72,53 @@ namespace Aspan_Ground.cardconnection
         {
             if (!_serialPort.IsOpen)
             {
-                IsUserRequestedDisconnect = false; // Yeni bağlantıda bayrağı sıfırla
-                _isDisconnecting = false; // Veri alımı açık
+                IsUserRequestedDisconnect = false; 
+                _isDisconnecting = false; 
+                IsVerified = false; // Başlangıçta doğrulanmadı
 
                 _serialPort.PortName = portName;
                 _serialPort.BaudRate = baudRate;
-                _serialPort.DtrEnable = true;  // Cihazın (STM/Teensy vb.) veri akışına başlamasını sağlar
-                _serialPort.RtsEnable = true;  // Aynı şekilde akış kontrol mandalı
+                _serialPort.DtrEnable = false; // DTR=true kart reset'e yol açar (Arduino/STM32)
+                _serialPort.RtsEnable = false; // RTS da kapalı tutulur
                 _serialPort.Open();
-                IsConnected = true; // YÖNETİM BİZDE (OS otomatik false yapsa bile bizimki true kalacak ve kopmayı yakalayacak)
+                IsConnected = true; 
                 _activePortName = portName;
+                
+                // İlk bağlantı event'i (Port açıldı ama henüz doğrulanmadı)
                 OnConnectionChanged?.Invoke(true);
-                Debug.WriteLine($"PORT OPENED: {portName} @ {baudRate}");
+                Debug.WriteLine($"PORT OPENED: {portName} @ {baudRate}. Verifying handshake...");
 
-                // Port kontrol döngüsünü başlat (Fiziksel kablo kopmasını yakalamak için Polling)
+                _lastPacketTime = DateTime.Now;
+                // Watchdog'u burada BAŞLATMA — doğrulama (IsVerified) sonrası başlatılacak.
+                // Aksi hâlde Handshake Timeout + Watchdog aynı anda ForceDisconnect yapar (race condition).
+
+                // Handshake Timeout Kontrolü
+                // Kablo bağlantısı: ~0.5s | Telemetri radyo (SiK vb.): 3-8s pairing süresi
+                // Bu yüzden 10 saniye bekliyoruz.
+                System.Threading.Tasks.Task.Run(async () =>
+                {
+                    await System.Threading.Tasks.Task.Delay(15000);
+                    if (IsConnected && !IsVerified)
+                    {
+                        Debug.WriteLine("[SerialManager] HANDSHAKE TIMEOUT! (15s) Valid data not received.");
+                        Application.Current?.Dispatcher.InvokeAsync(() => ForceDisconnect());
+                    }
+                });
+
                 StartConnectionMonitor(portName);
+            }
+        }
+
+        private void HeartbeatWatchdog_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (!IsConnected) return;
+
+            // Telemetri radyolarda paket kayıpları ve gecikmeler olabilir.
+            // 3s yerine 6s bekleyerek geçici sinyal kayıplarında bağlantıyı kesme.
+            if ((DateTime.Now - _lastPacketTime).TotalSeconds > 6)
+            {
+                Debug.WriteLine("[SerialManager] HEARTBEAT LOST! Data stream stopped for >6s.");
+                Application.Current?.Dispatcher.InvokeAsync(() => ForceDisconnect());
             }
         }
 
@@ -209,6 +249,7 @@ namespace Aspan_Ground.cardconnection
                         _serialPort.Close();
                     }
                     _buffer.Clear(); // Kuyrukta kalan son paketleri çöpe at
+                    _heartbeatWatchdog.Stop();
                 }
                 catch { }
                 finally
@@ -242,7 +283,15 @@ namespace Aspan_Ground.cardconnection
         private void SerialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             Debug.WriteLine($"Serial Port Error: {e.EventType}");
-            ForceDisconnect();
+
+            // Framing ve Parity hataları bağlantı başlangıcında geçici olarak oluşabilir — bağlantıyı kesme.
+            // Yalnızca buffer taşması veya TX dolması gibi ciddi hatalarda kes.
+            if (e.EventType == SerialError.RXOver ||
+                e.EventType == SerialError.Overrun ||
+                e.EventType == SerialError.TXFull)
+            {
+                Application.Current?.Dispatcher.InvokeAsync(() => ForceDisconnect());
+            }
         }
 
         private List<byte> _buffer = new List<byte>();
@@ -274,6 +323,20 @@ namespace Aspan_Ground.cardconnection
 
                         if (packet[19] == checksum)
                         {
+                            // Heartbeat reset
+                            _lastPacketTime = DateTime.Now;
+
+                            // Geçerli bir paket gelirse cihaz doğrulanmış sayılır
+                            if (!IsVerified)
+                            {
+                                IsVerified = true;
+                                // Watchdog'u sadece doğrulama başarılı olduktan sonra başlat.
+                                // Bu sayede Handshake Timeout ile yarış ortadan kalkar.
+                                _heartbeatWatchdog.Start();
+                                Application.Current?.Dispatcher.InvokeAsync(() => OnConnectionVerified?.Invoke());
+                                Debug.WriteLine("[SerialManager] Handshake Successful! Device Verified. Watchdog started.");
+                            }
+
                             byte packetType = packet[2];
                             
                             // string hexDump = string.Join(" ", packet.Select(b => b.ToString("X2")));

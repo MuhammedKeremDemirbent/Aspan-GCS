@@ -40,9 +40,14 @@ namespace Aspan_Ground.components.molecules
 
             // Arka planda donanımsal kopma olursa UI da haberdar olsun
             Aspan_Ground.cardconnection.SerialManager.Instance.OnConnectionChanged += UI_OnConnectionChanged;
+            
+            // Handshake başarılı olduğunda UI'ı tam sese (yeşile) çek
+            Aspan_Ground.cardconnection.SerialManager.Instance.OnConnectionVerified += () => {
+                Dispatcher.InvokeAsync(() => SetUIState(true, true));
+            };
 
             // Başlangıç Durumu
-            SetUIState(false);
+            SetUIState(false, false);
         }
 
         private void UI_OnConnectionChanged(bool isConnected)
@@ -82,7 +87,15 @@ namespace Aspan_Ground.components.molecules
                     Aspan_Ground.services.DataDesc.Instance.NotifyAllPropertiesChanged();
 
                     // UI renk değişikliklerini uygula
-                    SetUIState(false);
+                    SetUIState(false, false);
+
+                    // Eğer kullanıcı istemeden koptuysa ve doğrulama aşamasındayken koptuysa hata göster
+                    if (!Aspan_Ground.cardconnection.SerialManager.Instance.IsUserRequestedDisconnect && 
+                        !Aspan_Ground.cardconnection.SerialManager.Instance.IsVerified)
+                    {
+                        var mainWindow = Window.GetWindow(this) as MainWindow;
+                        mainWindow?.ShowError("BAĞLANTI HATASI", "Cihaz doğrulanamadı. Lütfen doğru portun seçili olduğundan emin olun.");
+                    }
                 });
             }
         }
@@ -112,8 +125,8 @@ namespace Aspan_Ground.components.molecules
 
                     if (Aspan_Ground.cardconnection.SerialManager.Instance.IsConnected)
                     {
-                        // Bağlandığı an direkt arayüzü CONNECTION yap
-                        SetUIState(true);
+                        // Bağlandığı an önce "DOĞRULANIYOR" (Verifying) durumuna geç
+                        SetUIState(true, false);
                     }
                 }
                 catch (Exception ex)
@@ -136,7 +149,7 @@ namespace Aspan_Ground.components.molecules
             // DataDesc sıfırlaması artık UI_OnConnectionChanged event'i tetiklendiğinde otomatik yapılacak
         }
 
-        private void SetUIState(bool isConnected)
+        private void SetUIState(bool isConnected, bool isVerified)
         {
             // Buton aktif/pasif durumları
             BtnConnectControl.IsEnabled = !isConnected;
@@ -146,26 +159,8 @@ namespace Aspan_Ground.components.molecules
             BtnConnectControl.Opacity = isConnected ? 0.4 : 1.0;
             BtnDisconnectControl.Opacity = isConnected ? 1.0 : 0.4;
 
-            // TextBlock etiketlerini aç/kapat 
-            var grid = ConnectionLabels.Content as Grid;
-            if (grid != null && grid.Children.Count >= 2)
-            {
-                var lblNoConnection = grid.Children[0] as TextBlock;
-                var lblConnection = grid.Children[1] as TextBlock;
-                
-                if (lblNoConnection != null) 
-                {
-                    lblNoConnection.Visibility = isConnected ? Visibility.Collapsed : Visibility.Visible;
-                    lblNoConnection.Text = "NO CONNECTION";
-                }
-                
-                if (lblConnection != null) 
-                    lblConnection.Visibility = isConnected ? Visibility.Visible : Visibility.Collapsed;
-                
-                // Yeşil/Gri renk değişimi
-                if (lblConnection != null) 
-                    lblConnection.Foreground = new SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(isConnected ? "#3FB950" : "#8B949E"));
-            }
+            // Status Label ve Border Güncellemesi
+            ConnectionLabels.SetStatus(isConnected, isVerified);
             
             // Kullanıcı comboboxlara tıklamak istedi (Her zaman açık bırakılıyor)
             PortSelector.IsEnabled = true;

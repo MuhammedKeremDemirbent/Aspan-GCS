@@ -36,16 +36,16 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_roll_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPR" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_roll_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIR" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_roll_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDR" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="pid_p_gain_roll_angle" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericEXTRAR" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
                         </Grid>
                         
@@ -65,16 +65,16 @@
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_pitch_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPP" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_pitch_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIP" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_pitch_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDP" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="pid_p_gain_pitch_angle" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIEXTRAP" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
                         </Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
@@ -92,13 +92,13 @@
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_yaw_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPY" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_yaw_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIY" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_yaw_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDY" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
                             <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
@@ -119,16 +119,16 @@
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_height_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPH" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_height_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIH" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_height_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDH" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="pid_Kp_height" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericEXTRAH" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
                         </Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
@@ -146,16 +146,16 @@
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_east_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPE" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_east_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIE" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_east_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDE" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="pid_Kp_east" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericEXTRAE" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
                         </Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
@@ -173,16 +173,16 @@
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                             <Grid.RowDefinitions><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/></Grid.RowDefinitions>
                             
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Proportional (P)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="pid_Kp_north_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericPN" Grid.Row="0" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Integral (I)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="pid_Ki_north_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericIN" Grid.Row="1" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Derivative (D)" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="pid_Kd_north_rate" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericDN" Grid.Row="2" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Extra" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="pid_Kp_north" Foreground="White" VerticalAlignment="Center" Margin="0,5,15,5"/>
                             <mah:NumericUpDown x:Name="NumericEXTRAN" Grid.Row="3" Grid.Column="1" Value="0" StringFormat="F4" NumericInputMode="Decimal" Interval="0.1" Minimum="-10000" Maximum="10000" Margin="0,5" Foreground="White" Background="#FF161B22" BorderBrush="#30363D"/>
                         </Grid>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
@@ -195,22 +195,13 @@
             </WrapPanel>
         </ScrollViewer>
 
-        <!-- Read All / Write All -->
+        <!-- Read All -->
         <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center"
                     Orientation="Horizontal" Margin="0,0,0,20">
             <Button x:Name="ButtonReadAll"
                     Content="Read All"
                     Click="ButtonReadAll_Click"
                     Background="#1F6FEB" Foreground="White"
-                    BorderBrush="Transparent"
-                    Width="160" Height="40"
-                    FontSize="14" FontWeight="SemiBold"
-                    Margin="0,0,20,0"
-                    mah:ControlsHelper.CornerRadius="6"/>
-            <Button x:Name="ButtonWriteAll"
-                    Content="Write All"
-                    Click="ButtonWriteAll_Click"
-                    Background="#238636" Foreground="White"
                     BorderBrush="Transparent"
                     Width="160" Height="40"
                     FontSize="14" FontWeight="SemiBold"

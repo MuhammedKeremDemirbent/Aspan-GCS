@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,8 +30,9 @@ namespace Aspan_Ground.cardconnection
             Pitch  = 1,
             Yaw    = 2,
             Height = 3,
+            North  = 5,
             East   = 4,
-            North  = 5
+            All    = 6
         }
 
         // ──────────────────────────────────────────────────

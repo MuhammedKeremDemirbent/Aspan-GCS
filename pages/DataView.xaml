@@ -10,7 +10,7 @@
     <Grid>
         <Grid Background="#FF1B1F23">
             <WrapPanel Orientation="Horizontal" Margin="20" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <atoms:DataLabels Width="480" Margin="0,0,20,0">
+                <atoms:DataLabels Width="720" Margin="0,0,20,0">
                     <atoms:DataLabels.LayoutTransform>
                         <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
                     </atoms:DataLabels.LayoutTransform>

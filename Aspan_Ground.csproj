@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="assets\Icons\**\*.*">
+    <Content Include="assets\icons\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

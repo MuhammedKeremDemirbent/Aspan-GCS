@@ -204,7 +204,7 @@ namespace Aspan_Ground.components.instruments
             int textBoxHeight = (int)(insControlMarksDefinition.fontSize*1.1/scaleFactor);      
             Point textPoint = new Point();
             Point rotatePoint = new Point();
-            Font markFont = new Font("Arial", insControlMarksDefinition.fontSize);
+            Font markFont = new Font("Inter", insControlMarksDefinition.fontSize);
             SolidBrush markBrush = new SolidBrush(insControlMarksDefinition.fontColor);
             InstrumentControlMarkPoint[] markArray = new InstrumentControlMarkPoint[2 + insControlMarksDefinition.numberOfDivisions];
 

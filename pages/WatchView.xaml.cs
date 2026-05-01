@@ -84,6 +84,7 @@ namespace Aspan_Ground.pages
 
         private void InitializeMap()
         {
+            if (MapControl == null) return;
             try
             {
                 //BingSatelliteMap
@@ -111,20 +112,27 @@ namespace Aspan_Ground.pages
 
                 // --- Uçak (Drone) İkonunu Haritaya Ekleme ---
                 System.Windows.Controls.Image droneImage = new System.Windows.Controls.Image();
-                droneImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri("pack://application:,,,/assets/icons/Vector_Union.png"));
+                string baseDir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? AppDomain.CurrentDomain.BaseDirectory;
+                string iconPath = System.IO.Path.Combine(baseDir, "assets", "icons", "vector_union.png");
+                
+                if (System.IO.File.Exists(iconPath))
+                {
+                    droneImage.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(iconPath, UriKind.Absolute));
+                }
+                
                 droneImage.Width = 32;
                 droneImage.Height = 32;
 
                 _droneRotation = new RotateTransform();
-                _droneRotation.Angle = DataDesc.Instance.currentYaw; // İlk açı
+                _droneRotation.Angle = DataDesc.Instance != null ? DataDesc.Instance.currentYaw : 0; // İlk açı
                 _droneRotation.CenterX = 16; // 32'nin yarısı
                 _droneRotation.CenterY = 16; 
 
                 droneImage.RenderTransform = _droneRotation;
 
                 // Lat, Lon 0 ise varsayılan konumu kullan
-                double startLat = DataDesc.Instance.currentLat == 0 ? 39.92077 : DataDesc.Instance.currentLat;
-                double startLon = DataDesc.Instance.currentLon == 0 ? 32.85411 : DataDesc.Instance.currentLon;
+                double startLat = (DataDesc.Instance != null && DataDesc.Instance.currentLat != 0) ? DataDesc.Instance.currentLat : 39.92077;
+                double startLon = (DataDesc.Instance != null && DataDesc.Instance.currentLon != 0) ? DataDesc.Instance.currentLon : 32.85411;
 
                 _droneMarker = new GMapMarker(new PointLatLng(startLat, startLon));
                 _droneMarker.Shape = droneImage;
@@ -132,13 +140,16 @@ namespace Aspan_Ground.pages
                 _droneMarker.ZIndex = 100; // Her zaman üstte olsun
 
                 // İlk başta ikon gizli olsun, telemetri (veya connection) gelince görünür olacak
-                _droneMarker.Shape.Visibility = SerialManager.Instance.IsConnected ? Visibility.Visible : Visibility.Hidden;
+                _droneMarker.Shape.Visibility = (SerialManager.Instance != null && SerialManager.Instance.IsConnected) ? Visibility.Visible : Visibility.Hidden;
 
-                MapControl.Markers.Add(_droneMarker);
+                if (MapControl.Markers != null)
+                {
+                    MapControl.Markers.Add(_droneMarker);
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Harita yüklenirken bir hata oluştu: {ex.Message}", "HATA", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Harita yüklenirken bir hata oluştu: {ex.Message}\nDetails: {ex.StackTrace}", "HATA", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

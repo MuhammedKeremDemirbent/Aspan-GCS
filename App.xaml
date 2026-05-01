@@ -12,18 +12,24 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Blue.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- GLOBAL YAZI TİPİ (FONT) TANIMLAMASI (MahApps Fontlarını Eziyoruz) -->
-            <FontFamily x:Key="LexendFont">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
-            
-            <FontFamily x:Key="MahApps.Fonts.Family.Control">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
-            <FontFamily x:Key="MahApps.Fonts.Family.Header">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
-            <FontFamily x:Key="MahApps.Fonts.Family.WindowTitle">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
-            <FontFamily x:Key="MahApps.Fonts.Family.Button">pack://application:,,,/assets/fonts/Lexend/#Lexend</FontFamily>
+            <!-- GLOBAL YAZI TİPİ (FONT) TANIMLAMASI -->
+            <FontFamily x:Key="InterFont">pack://application:,,,/assets/fonts/Inter/#Inter</FontFamily>
 
-            <!-- Diğer genel font zorlamaları (MahApps dışı için) -->
+            <!-- MahApps.Metro Font Ayarları -->
+            <FontFamily x:Key="MahApps.Fonts.Family.Control">pack://application:,,,/assets/fonts/Inter/#Inter</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Header">pack://application:,,,/assets/fonts/Inter/#Inter</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.WindowTitle">pack://application:,,,/assets/fonts/Inter/#Inter</FontFamily>
+            <FontFamily x:Key="MahApps.Fonts.Family.Button">pack://application:,,,/assets/fonts/Inter/#Inter</FontFamily>
+
+            <!-- Varsayılan TextBlock ve Button Stilleri (Tüm arayüz için Inter) -->
             <Style TargetType="TextBlock">
-                <Setter Property="FontFamily" Value="{StaticResource LexendFont}"/>
+                <Setter Property="FontFamily" Value="{StaticResource InterFont}"/>
             </Style>
+
+            <Style TargetType="Button" BasedOn="{StaticResource MahApps.Styles.Button}">
+                <Setter Property="FontFamily" Value="{StaticResource InterFont}"/>
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>

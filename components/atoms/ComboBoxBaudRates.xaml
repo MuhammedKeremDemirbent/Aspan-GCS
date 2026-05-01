@@ -27,8 +27,8 @@
             <ComboBoxItem Content="9600"/>
             <ComboBoxItem Content="19200"/>
             <ComboBoxItem Content="38400"/>
-            <ComboBoxItem Content="57600" IsSelected="True"/>
-            <ComboBoxItem Content="115200"/>
+            <ComboBoxItem Content="57600" />
+            <ComboBoxItem Content="115200" IsSelected="True"/>
         </ComboBox>
     </Border>
 </UserControl>

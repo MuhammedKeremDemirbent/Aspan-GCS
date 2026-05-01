@@ -19,14 +19,14 @@
         BorderThickness="1"
         WindowTitleBrush="#FF1B1F23"
         NonActiveWindowTitleBrush="#FF1B1F23"
-        FontFamily="pack://application:,,,/assets/fonts/Lexend/#Lexend">
+        FontFamily="pack://application:,,,/assets/fonts/Inter/#Inter">
 
     <Window.Resources>
         <Style x:Key="ModernTabItemStyle" TargetType="TabItem">
             <Setter Property="Foreground" Value="#8B949E"/>
-            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="36,22"/>
+            <Setter Property="Padding" Value="36,15"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Template">
@@ -138,7 +138,7 @@
         </mah:MetroAnimatedSingleRowTabControl>
 
         <!-- ALERTS OVERLAY -->
-        <molecules:alerts x:Name="MainAlert" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="999" />
+        <molecules:alerts x:Name="MainAlert" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="999" RenderTransformOrigin="0.458,0.511" />
     </Grid>
 
 </mah:MetroWindow>

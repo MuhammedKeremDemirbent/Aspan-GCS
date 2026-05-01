@@ -21,65 +21,101 @@
         <Grid.DataContext>
             <Binding Source="{x:Static services:DataDesc.Instance}"/>
         </Grid.DataContext>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>     
+        </Grid.ColumnDefinitions>
         <!-- Sol Taraf: ÇEŞİTLİ GÖSTERGELER -->
         <Grid Grid.Column="0">
-            <!-- Havacılık Göstergeleri (Sol Üst) -->
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="20">
-                
-                <!-- Suni Ufuk (Attitude Indicator) -->
-                <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Margin="0,0,20,0" Width="260" Height="260" SnapsToDevicePixels="True">
-                    <wfi:WindowsFormsHost Background="Transparent" Margin="2">
-                        <instruments:AttitudeIndicatorInstrumentControl x:Name="AttitudeIndicator" />
-                    </wfi:WindowsFormsHost>
-                </Border>
 
-                <!-- Pusula (Heading Indicator) -->
-                <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Width="260" Height="260" SnapsToDevicePixels="True">
-                    <wfi:WindowsFormsHost Background="Transparent" Margin="2">
-                        <instruments:HeadingIndicatorInstrumentControl x:Name="HeadingIndicator" />
-                    </wfi:WindowsFormsHost>
-                </Border>
+            <StackPanel>
+                <!-- Havacılık Göstergeleri (Sol Üst) -->
+                <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal" Margin="20">
 
+                    <!-- Suni Ufuk (Attitude Indicator) -->
+                    <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Margin="0,0,20,0" Width="260" Height="260" SnapsToDevicePixels="True">
+                        <wfi:WindowsFormsHost Background="Transparent" Margin="2">
+                            <instruments:AttitudeIndicatorInstrumentControl x:Name="AttitudeIndicator" />
+                        </wfi:WindowsFormsHost>
+                    </Border>
+
+
+                    <!-- Pusula (Heading Indicator) -->
+                    <Border BorderBrush="#30363D" BorderThickness="2" CornerRadius="8" Background="#FF1B1F23" Width="260" Height="260" SnapsToDevicePixels="True">
+                        <wfi:WindowsFormsHost Background="Transparent" Margin="2">
+                            <instruments:HeadingIndicatorInstrumentControl x:Name="HeadingIndicator" />
+                        </wfi:WindowsFormsHost>
+                    </Border>
+
+                </StackPanel>
+
+                <Grid Margin="10,10,25,0" Height="135">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="ALTITUDE:"
+                               Foreground="White" 
+                               FontSize="33" 
+                               FontWeight="Bold" 
+                               VerticalAlignment="Center" 
+                               Margin="8,70,10,0"/>
+
+                    <TextBlock
+                               Text="{Binding currentAltitude}" 
+                               Foreground="White" 
+                               FontSize="48" 
+                               FontWeight="Bold" 
+                               FontStyle="Italic"
+                               VerticalAlignment="Top" 
+                               HorizontalAlignment="Right"
+                               TextAlignment="Right"
+                               Margin="0,13,97,0" Width="41"/>
+                </Grid>
             </StackPanel>
-
             <!-- Göstergeler (Sol Alt Köşe) -->
-            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="20" Orientation="Horizontal">
-                
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="25" Orientation="Horizontal">
+
+
                 <!-- Uydu -->
-                <StackPanel Orientation="Vertical" Margin="0,0,20,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,25,0">
                     <materialDesign:PackIcon Kind="SatelliteVariant" 
                                              Foreground="#58A6FF" 
                                              Width="32" 
                                              Height="32" 
-                                             HorizontalAlignment="Center"/>
-                    
+                                             VerticalAlignment="Center"/>
+
                     <TextBlock Text="{Binding currentSatellites}" 
                                Foreground="White" 
                                FontSize="18" 
                                FontWeight="Bold" 
-                               HorizontalAlignment="Center" 
-                               Margin="0,5,0,0"/>
+                               FontStyle="Italic"
+                               VerticalAlignment="Center" 
+                               Width="40"
+                               TextAlignment="Left"
+                               Margin="8,0,0,0"/>
                 </StackPanel>
 
                 <!-- Batarya -->
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
                     <materialDesign:PackIcon Kind="BatteryMedium" 
                                              Foreground="{Binding currentBattery, Converter={StaticResource BatteryColorConverter}}" 
                                              Width="32" 
-                                             Height="32" 
-                                             HorizontalAlignment="Center"/>
-                    
-                    <TextBlock Text="{Binding currentBattery, StringFormat={}{0}}" 
+                                             Height="32"/>
+
+                    <TextBlock Text="{Binding currentBattery, StringFormat={}{0}%}" 
                                Foreground="{Binding currentBattery, Converter={StaticResource BatteryColorConverter}}" 
                                FontSize="18" 
                                FontWeight="Bold" 
-                               HorizontalAlignment="Center" 
-                               Margin="0,5,0,0"/>
+                               FontStyle="Italic"
+                               VerticalAlignment="Center" 
+                               Width="60"
+                               TextAlignment="Left"
+                               Margin="8,0,0,0"/>
                 </StackPanel>
 
             </StackPanel>
