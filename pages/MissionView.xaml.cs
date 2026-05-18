@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,6 +69,71 @@ namespace Aspan_Ground.pages
             MissionAlert.OnOkClicked += (s, ev) => MissionAlert.HideAlert();
             MissionAlert.OnNoClicked += (s, ev) => MissionAlert.HideAlert();
             MissionAlert.OnYesClicked += (s, ev) => MissionAlert.HideAlert();
+
+            // YENİ EKLENEN: Karttan gelen canlı GPS verisini (Lat, Lon) dinle
+            Aspan_Ground.services.DataDesc.Instance.PropertyChanged += DataDesc_PropertyChanged;
+        }
+
+        private GMapMarker? _droneMarker = null;
+
+        private void DataDesc_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Yalnızca Enlem ve Boylam değiştiğinde tetiklenir
+            if (e.PropertyName == "currentLat" || e.PropertyName == "currentLon")
+            {
+                Application.Current.Dispatcher.InvokeAsync(() =>
+                {
+                    UpdateDroneMarker();
+                });
+            }
+        }
+
+        private void UpdateDroneMarker()
+        {
+            double lat = Aspan_Ground.services.DataDesc.Instance.currentLat;
+            double lon = Aspan_Ground.services.DataDesc.Instance.currentLon;
+
+            // GPS verisi henüz gelmemişse veya 0 ise haritada çizme
+            if (lat == 0 && lon == 0) return;
+
+            PointLatLng currentPos = new PointLatLng(lat, lon);
+
+            if (_droneMarker == null)
+            {
+                // İlk defa oluşturuluyor
+                _droneMarker = new GMapMarker(currentPos);
+                
+                // Mavi renkli ve yuvarlak 'H' (Home/Uçak) İkonu
+                Grid pinGrid = new Grid { Width = 30, Height = 30, Background = System.Windows.Media.Brushes.Transparent };
+                System.Windows.Shapes.Ellipse bg = new System.Windows.Shapes.Ellipse { Fill = System.Windows.Media.Brushes.DodgerBlue, Stroke = System.Windows.Media.Brushes.White, StrokeThickness = 2 };
+                TextBlock text = new TextBlock
+                {
+                    Text = "H",
+                    FontWeight = FontWeights.Bold,
+                    Foreground = System.Windows.Media.Brushes.White,
+                    FontSize = 14,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+
+                pinGrid.Children.Add(bg);
+                pinGrid.Children.Add(text);
+                pinGrid.ToolTip = "Canlı Uçak Konumu";
+
+                _droneMarker.Shape = pinGrid;
+                _droneMarker.Offset = new System.Windows.Point(-15, -15); // Pin'in merkezini koordinata hizalamak için -15
+                _droneMarker.ZIndex = 200; // Waypoint'lerin ve çizgilerin en üstünde gözüksün
+
+                MapControl.Markers.Add(_droneMarker);
+            }
+            else
+            {
+                // Var olan marker'ın konumunu güncelle (Haritada otomatik pürüzsüz kayacaktır)
+                _droneMarker.Position = currentPos;
+            }
+
+            // Uçak (H) konum değiştirdiğinde, H noktası ile 1. WP arasındaki çizgiyi de hareket ettirmek için haritayı tazeliyoruz.
+            RedrawMap();
         }
 
         private void InitializeMap()
@@ -158,9 +223,31 @@ namespace Aspan_Ground.pages
         {
             MapControl.Markers.Clear();
 
+            // Harita her temizlendiğinde, eğer canlı Uçak (H) marker'ımız varsa onu kaybetmemek için geri ekleyelim
+            if (_droneMarker != null)
+            {
+                MapControl.Markers.Add(_droneMarker);
+            }
+
             if (Waypoints.Count == 0) return;
 
             var routePoints = Waypoints.Select(w => new PointLatLng(w.Lat, w.Lng)).ToList();
+
+            // YENİ: Uçak (H) noktası ile haritadaki 1. Waypoint (İlk Hedef) arasına kesikli çizgi çek
+            if (_droneMarker != null && routePoints.Count > 0)
+            {
+                var droneToWp = new List<PointLatLng> { _droneMarker.Position, routePoints[0] };
+                GMapRoute droneRoute = new GMapRoute(droneToWp);
+                System.Windows.Shapes.Path droneRoutePath = new System.Windows.Shapes.Path
+                {
+                    Stroke = System.Windows.Media.Brushes.DarkOrange, // Diğerlerinden ayırmak için Koyu Turuncu
+                    StrokeThickness = 3,
+                    StrokeDashArray = new DoubleCollection { 4, 4 } // Kesikli çizgi yapısı
+                };
+                droneRoute.Shape = droneRoutePath;
+                droneRoute.ZIndex = 8;
+                MapControl.Markers.Add(droneRoute);
+            }
 
             // 0. (Ekstra) Checkbox İşaretli ise İç Alanı Boya (Polygon)
             if (FillAreaCb.IsChecked == true)
@@ -234,32 +321,35 @@ namespace Aspan_Ground.pages
             PointLatLng latLng = new PointLatLng(wp.Lat, wp.Lng);
             GMapMarker marker = new GMapMarker(latLng);
 
-            // Daha küçük bir Yeşil Pin Çizimi (Eski çap 15, yeni çap 12)
+            // Negatif koordinatlardan kaynaklanan kaymayı önlemek için yörünge pozitif düzleme taşındı (24x36)
             System.Windows.Shapes.Path pinShape = new System.Windows.Shapes.Path
             {
                 Fill = System.Windows.Media.Brushes.LimeGreen,
                 Stroke = System.Windows.Media.Brushes.Black,
                 StrokeThickness = 1.2,
-                Data = System.Windows.Media.Geometry.Parse("M 0,0 C -8,-8 -12,-16 -12,-24 A 12,12 0 1,1 12,-24 C 12,-16 8,-8 0,0 Z"),
+                Data = System.Windows.Media.Geometry.Parse("M 12,36 C 4,28 0,20 0,12 A 12,12 0 1,1 24,12 C 24,20 20,28 12,36 Z"),
             };
 
-            // İçerisine yazı ve pin'i koyacağımız Container Grid
-            Grid pinGrid = new Grid();
-            pinGrid.Cursor = Cursors.Hand;
-            pinGrid.Background = System.Windows.Media.Brushes.Transparent; // Etkileşimi güçlendirmek için
+            // İçerisine yazı ve pin'i koyacağımız Container Grid (Boyutlar SABİT 24x36)
+            Grid pinGrid = new Grid
+            {
+                Width = 24,
+                Height = 36,
+                Cursor = Cursors.Hand,
+                Background = System.Windows.Media.Brushes.Transparent
+            };
             pinGrid.Children.Add(pinShape);
 
-            // Sadece Hover ile gözüken Numara Text'i (İkonun tam ortasında yuvarlak bölüme)
+            // Her zaman gözüken Numara Text'i (Tam yeşil ampulün ortasına hizalı)
             TextBlock textNum = new TextBlock
             {
                 Text = (index + 1).ToString(),
                 FontWeight = FontWeights.Bold,
                 Foreground = System.Windows.Media.Brushes.White,
-                FontSize = 10,
+                FontSize = 12, 
                 HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 12), // Merkezden pin'in dairesel göbeğine doğru kaydır
-                Visibility = Visibility.Hidden
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 3, 0, 0) // Yeşilin tam ampul merkezine (Y=12) denk gelmesi için
             };
             pinGrid.Children.Add(textNum);
 
@@ -284,9 +374,7 @@ namespace Aspan_Ground.pages
                 ev.Handled = true;
             };
 
-            // Fare üzerine geldiğinde/ayrıldığında Numarayı gösterip gizle
-            pinGrid.MouseEnter += (s, ev) => textNum.Visibility = Visibility.Visible;
-            pinGrid.MouseLeave += (s, ev) => textNum.Visibility = Visibility.Hidden;
+            // (Fare üzerine gelme olayları kaldırıldı, numara hep görünür kalacak)
 
             // Context Menu (Sil)
             ContextMenu cm = new ContextMenu();
@@ -296,6 +384,7 @@ namespace Aspan_Ground.pages
             pinGrid.ContextMenu = cm;
 
             marker.Shape = pinGrid;
+            marker.Offset = new System.Windows.Point(-12, -36); // Pinin sivri ucunu tam olarak haritadaki çizgilere ve gerçel koordinata oturtur
             marker.ZIndex = 100;
             return marker;
         }
@@ -414,6 +503,41 @@ namespace Aspan_Ground.pages
                     RecalculateIndexes();
                     RedrawMap();
                 }
+            }
+        }
+
+        private async void UploadMission_Click(object sender, RoutedEventArgs e)
+        {
+            if (Waypoints.Count == 0)
+            {
+                MissionAlert.ShowAlert("Görev Yok", "Lütfen haritaya en az 1 waypoint ekleyin.", true);
+                return;
+            }
+
+            var sm = Aspan_Ground.cardconnection.SerialManager.Instance;
+            if (!sm.IsConnected)
+            {
+                MissionAlert.ShowAlert("Bağlantı Yok", "Lütfen görevleri yüklemeden önce uçağa bağlanın.", true);
+                return;
+            }
+
+            try
+            {
+                for (int i = 0; i < Waypoints.Count; i++)
+                {
+                    var wp = Waypoints[i];
+                    byte sira = (byte)(i + 1); // C kodu `gorev_sira+1` kontrolü yapıyor, bu yüzden 1'den başlatıyoruz
+                    sm.SendWaypoint(sira, wp.Lat, wp.Lng, (float)wp.Alt, 500); // 500: Varsayılan hız limiti
+                    await Task.Delay(50); // Paketlerin üst üste binmemesi için seri portta 50ms bekleme
+                }
+
+                // Tüm görevler yüklendikten sonra "Hazır" (gorev_durum = 1) paketini yolla
+                sm.SendMissionReady((byte)Waypoints.Count);
+                MissionAlert.ShowAlert("Başarılı", $"{Waypoints.Count} adet görev noktası uçağa yüklendi ve otonoma hazır!", false);
+            }
+            catch (Exception ex)
+            {
+                MissionAlert.ShowAlert("Hata", $"Görevler yüklenirken bir hata oluştu: {ex.Message}", true);
             }
         }
     }

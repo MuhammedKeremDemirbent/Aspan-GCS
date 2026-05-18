@@ -280,6 +280,92 @@ namespace Aspan_Ground.cardconnection
             }
         }
 
+        public void SendWaypoint(byte index, double lat, double lon, float alt, short speed)
+        {
+            if (!IsConnected) return;
+
+            byte[] packet = new byte[17];
+            packet[0] = 0x42; // 'B'
+            packet[1] = 0x47; // 'G'
+            packet[2] = 0x01; // GOREV_ALMA_ID
+
+            packet[3] = index; // gorev_sirasi (1, 2, 3...)
+
+            short shortAlt = (short)alt; // Yükseklik 2 byte
+            int intLat = (int)(lat * 1e7); // Enlem 4 byte
+            int intLon = (int)(lon * 1e7); // Boylam 4 byte
+
+            // BitConverter varsayılan olarak Little-Endian çalışır (LSB önce, MSB sonra)
+            BitConverter.GetBytes(shortAlt).CopyTo(packet, 4); // [4, 5]
+            BitConverter.GetBytes(intLat).CopyTo(packet, 6);   // [6, 7, 8, 9]
+            BitConverter.GetBytes(intLon).CopyTo(packet, 10);  // [10, 11, 12, 13]
+            BitConverter.GetBytes(speed).CopyTo(packet, 14);   // [14, 15]
+
+            // Checksum hesaplama (Önceki BG paketlerinde ID + veriler toplanıyordu)
+            byte checksum = 0;
+            for (int i = 2; i < 16; i++)
+            {
+                checksum += packet[i];
+            }
+            packet[16] = checksum;
+
+            Send(packet);
+        }
+
+        public void SendMissionReady(byte totalWaypoints)
+        {
+            if (!IsConnected) return;
+
+            byte[] packet = new byte[5];
+            packet[0] = 0x42; // 'B'
+            packet[1] = 0x47; // 'G'
+            packet[2] = 0x03; // BASLAT_ID
+            packet[3] = 0x01; // görev durumu = 0x01
+
+            // Checksum: ID ve Durumun toplamı
+            packet[4] = (byte)(packet[2] + packet[3]);
+
+            Send(packet);
+        }
+
+        public void SendFlightModeChange(byte newMode)
+        {
+            if (!IsConnected) return;
+
+            byte[] packet = new byte[20];
+            packet[0] = 0x46; // 'F'
+            packet[1] = 0x43; // 'C'
+            packet[2] = 32;   // Packet ID: Flight Mode Change
+            
+            packet[3] = newMode; // İstenilen Uçuş Modu (örn: 3 = Otonom)
+
+            byte checksum = 0xFF;
+            for (int i = 0; i < 19; i++)
+                checksum = (byte)(checksum - packet[i]);
+            packet[19] = checksum;
+
+            Send(packet);
+        }
+
+        public void SendArmCommand(byte armState)
+        {
+            if (!IsConnected) return;
+
+            byte[] packet = new byte[20];
+            packet[0] = 0x46; // 'F'
+            packet[1] = 0x43; // 'C'
+            packet[2] = 33;   // Packet ID: Arm/Disarm (Bizim seçtiğimiz ID)
+            
+            packet[3] = armState; // 1 = ARM, 0 = DISARM
+
+            byte checksum = 0xFF;
+            for (int i = 0; i < 19; i++)
+                checksum = (byte)(checksum - packet[i]);
+            packet[19] = checksum;
+
+            Send(packet);
+        }
+
         private void SerialPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             Debug.WriteLine($"Serial Port Error: {e.EventType}");
@@ -309,11 +395,30 @@ namespace Aspan_Ground.cardconnection
 
                 _buffer.AddRange(tempBuffer);
 
-                while (_buffer.Count >= 20)
+                while (_buffer.Count >= 5)
                 {
-                    // Paket başlık kontrolü (0x46 = 'F', 0x43 = 'C')
+                    // 1. Görev Durum Paketi ('B', 'G') - 5 byte
+                    if (_buffer[0] == 'B' && _buffer[1] == 'G')
+                    {
+                        byte[] packet = _buffer.GetRange(0, 5).ToArray();
+                        _buffer.RemoveRange(0, 5);
+
+                        MissionData mission = _telemetryParser.ParseMissionInfo(packet);
+                        if (mission.IsChecksumValid)
+                        {
+                            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                            {
+                                DataDesc.Instance.currentMissionStatus = mission.GorevStatus;
+                            }));
+                        }
+                        continue;
+                    }
+
+                    // 2. Paket başlık kontrolü (0x46 = 'F', 0x43 = 'C') - 20 byte
                     if (_buffer[0] == 0x46 && _buffer[1] == 0x43)
                     {
+                        if (_buffer.Count < 20) break; // Paket tamamlanmamışsa bekle
+
                         byte[] packet = _buffer.GetRange(0, 20).ToArray();
                         _buffer.RemoveRange(0, 20);
 
@@ -390,6 +495,8 @@ namespace Aspan_Ground.cardconnection
                                     DataDesc.Instance.currentFree1 = model.Free1;
                                     DataDesc.Instance.currentChannel7 = model.Channel7;
                                     DataDesc.Instance.currentChannel8 = model.Channel8;
+                                    DataDesc.Instance.currentFlightMode = model.FlightMode;
+                                    DataDesc.Instance.currentArmStatus = model.ArmStatus;
                                 }
                                 else if (packetType >= 0x00 && packetType <= 0x05)
                                 {

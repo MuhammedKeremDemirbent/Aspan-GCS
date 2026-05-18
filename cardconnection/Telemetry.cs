@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,7 +57,28 @@ namespace Aspan_Ground.cardconnection
                 ModelID = BitConverter.ToInt16(packet, 3),
                 Free1 = BitConverter.ToInt16(packet, 5),
                 Channel7 = packet[7],
-                Channel8 = packet[8]
+                Channel8 = packet[8],
+                FlightMode = packet[9],
+                ArmStatus = packet[10]
+            };
+        }
+
+        public MissionData ParseMissionInfo(byte[] packet)
+        {
+            // packet[0] = 'B', packet[1] = 'G'
+            // packet[2] = GOREV_CEVAP_ID
+            // packet[3] = gorev verisi
+            // packet[4] = checksum
+            
+            // Checksum doğrulaması:
+            byte expectedChecksum = (byte)(packet[2] + packet[3]);
+            bool isChecksumValid = (expectedChecksum == packet[4]);
+
+            return new MissionData
+            {
+                PaketID = packet[2],
+                GorevStatus = packet[3],
+                IsChecksumValid = isChecksumValid
             };
         }
     }
@@ -68,6 +89,8 @@ namespace Aspan_Ground.cardconnection
         public short Free1;
         public byte Channel7;
         public byte Channel8;
+        public byte FlightMode;
+        public byte ArmStatus;
     }
 
     public struct TelemetryData
@@ -92,6 +115,13 @@ namespace Aspan_Ground.cardconnection
         public byte Channel6;
         public short HorizontalSpeed;
         public short VerticalSpeed;
+    }
+
+    public struct MissionData
+    {
+        public byte PaketID;
+        public byte GorevStatus;
+        public bool IsChecksumValid; // İletişim hatası var mı diye kontrol etmek için
     }
 }
 

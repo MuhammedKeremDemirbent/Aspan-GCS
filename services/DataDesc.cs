@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -79,6 +79,9 @@ namespace Aspan_Ground.services
         private byte _currentChannel6;
         private short _currentHorizontalSpeed;
         private short _currentVerticalSpeed;
+        private byte _currentMissionStatus;
+        private byte _currentFlightMode;
+        private byte _currentArmStatus;
 
         //Ön Plan WPF Özellikleri
         public float currentPitch 
@@ -180,6 +183,56 @@ namespace Aspan_Ground.services
         public short currentFree1 { get => _currentFree1; set => SetProperty(ref _currentFree1, value); }
         public byte currentChannel7 { get => _currentChannel7; set => SetProperty(ref _currentChannel7, value); }
         public byte currentChannel8 { get => _currentChannel8; set => SetProperty(ref _currentChannel8, value); }
+        public byte currentMissionStatus { get => _currentMissionStatus; set => SetProperty(ref _currentMissionStatus, value); }
+        
+        public byte currentFlightMode 
+        { 
+            get => _currentFlightMode; 
+            set 
+            {
+                if (SetProperty(ref _currentFlightMode, value))
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(currentFlightModeString)));
+                }
+            } 
+        }
+
+        public string currentFlightModeString
+        {
+            get
+            {
+                switch (_currentFlightMode)
+                {
+                    case 1: return "MANUAL";
+                    case 2: return "STABILIZE";
+                    case 3: return "AUTONOMOUS";
+                    default: return $"MODE {_currentFlightMode}";
+                }
+            }
+        }
+
+        public byte currentArmStatus
+        {
+            get => _currentArmStatus;
+            set
+            {
+                if (SetProperty(ref _currentArmStatus, value))
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(currentArmStatusString)));
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(currentArmStatusColor)));
+                }
+            }
+        }
+
+        public string currentArmStatusString
+        {
+            get { return _currentArmStatus == 1 ? "ARMED" : "DISARMED"; }
+        }
+
+        public string currentArmStatusColor
+        {
+            get { return _currentArmStatus == 1 ? "#39FF14" : "#FF073A"; } // Armed = Yeşil, Disarmed = Kırmızı
+        }
 
         //INotifyPropertyChanged Kısa Yolu
         public event PropertyChangedEventHandler PropertyChanged;
